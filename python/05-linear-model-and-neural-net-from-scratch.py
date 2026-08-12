@@ -3,22 +3,29 @@
 This file was extracted from the corresponding Jupyter notebook.
 """
 
-import subprocess
-
-# ## Introduction
 import os
+import subprocess
+import zipfile
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
+import sympy
+import torch
+import torch.nn.functional as F
+from fastai.data.transforms import RandomSplitter
+from torch import tensor
+
+# ## Introduction
 iskaggle = os.environ.get('KAGGLE_KERNEL_RUN_TYPE', '')
 if iskaggle: path = Path('../input/titanic')
 else:
     path = Path('titanic')
     if not path.exists():
-        import zipfile,kaggle
+        import kaggle
         kaggle.api.competition_download_cli(str(path))
         zipfile.ZipFile(f'{path}.zip').extractall(path)
 
-import torch, numpy as np, pandas as pd
 np.set_printoptions(linewidth=140)
 torch.set_printoptions(linewidth=140, sci_mode=False, edgeitems=7)
 pd.set_option('display.width', 140)
@@ -35,8 +42,6 @@ modes
 df.fillna(modes, inplace=True)
 
 df.isna().sum()
-
-import numpy as np
 
 df.describe(include=(np.number))
 
@@ -56,8 +61,6 @@ df.columns
 
 added_cols = ['Sex_male', 'Sex_female', 'Pclass_1', 'Pclass_2', 'Pclass_3', 'Embarked_C', 'Embarked_Q', 'Embarked_S']
 df[added_cols].head()
-
-from torch import tensor
 
 t_dep = tensor(df.Survived)
 
@@ -114,7 +117,6 @@ with torch.no_grad():
     print(calc_loss(coeffs, t_indep, t_dep))
 
 # ## Training the linear model
-from fastai.data.transforms import RandomSplitter
 trn_split,val_split=RandomSplitter(seed=42)(df)
 
 trn_indep,val_indep = t_indep[trn_split],t_indep[val_split]
@@ -158,7 +160,6 @@ acc(coeffs)
 # ## Using sigmoid
 preds[:28]
 
-import sympy
 sympy.plot("1/(1+exp(-x))", xlim=(-5,5));
 
 def calc_preds(coeffs, indeps): return torch.sigmoid((indeps*coeffs).sum(axis=1))
@@ -211,8 +212,6 @@ def init_coeffs(n_hidden=20):
     const = torch.rand(1)[0]
     return layer1.requires_grad_(),layer2.requires_grad_(),const.requires_grad_()
 
-import torch.nn.functional as F
-
 def calc_preds(coeffs, indeps):
     l1,l2,const = coeffs
     res = F.relu(indeps@l1)
@@ -240,8 +239,6 @@ def init_coeffs():
     for l in layers+consts: l.requires_grad_()
     return layers,consts
 
-import torch.nn.functional as F
-
 def calc_preds(coeffs, indeps):
     layers,consts = coeffs
     n = len(layers)
@@ -262,4 +259,3 @@ coeffs = train_model(lr=4)
 acc(coeffs)
 
 # ## Final thoughts
-

@@ -3,8 +3,14 @@
 This file was extracted from the corresponding Jupyter notebook.
 """
 
+from functools import partial
+
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+import torch.nn.functional as F
+
 # ## Fitting a function with *gradient descent*
-from fastai.basics import *
 
 plt.rc('figure', dpi=90)
 
@@ -88,7 +94,6 @@ def rectified_linear(m,b,x):
 
 plot_function(partial(rectified_linear, 1,1))
 
-import torch.nn.functional as F
 def rectified_linear2(m,b,x): return F.relu(m*x+b)
 plot_function(partial(rectified_linear2, 1,1))
 

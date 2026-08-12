@@ -4,16 +4,29 @@ This file was extracted from the corresponding Jupyter notebook.
 """
 
 # ## Introduction
-from fastai.imports import *
+import os
+import re
+import zipfile
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from numpy import random
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import mean_absolute_error
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+
 np.set_printoptions(linewidth=130)
 
 # ## Data preprocessing
-import os
 iskaggle = os.environ.get('KAGGLE_KERNEL_RUN_TYPE', '')
 
 if iskaggle: path = Path('../input/titanic')
 else:
-    import zipfile,kaggle
+    import kaggle
     path = Path('titanic')
     kaggle.api.competition_download_cli(str(path))
     zipfile.ZipFile(f'{path}.zip').extractall(path)
@@ -41,14 +54,9 @@ df.Sex.head()
 df.Sex.cat.codes.head()
 
 # ## Binary splits
-import seaborn as sns
-
 fig,axs = plt.subplots(1,2, figsize=(11,5))
 sns.barplot(data=df, y=dep, x="Sex", ax=axs[0]).set(title="Survival rate")
 sns.countplot(data=df, x="Sex", ax=axs[1]).set(title="Histogram");
-
-from numpy import random
-from sklearn.model_selection import train_test_split
 
 random.seed(42)
 trn_df,val_df = train_test_split(df, test_size=0.25)
@@ -64,7 +72,6 @@ val_xs,val_y = xs_y(val_df)
 
 preds = val_xs.Sex==0
 
-from sklearn.metrics import mean_absolute_error
 mean_absolute_error(val_y, preds)
 
 df_fare = trn_df[trn_df.LogFare>0]
@@ -126,8 +133,6 @@ males,females = trn_df[ismale],trn_df[~ismale]
 
 {o:min_col(females, o) for o in cols}
 
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
-
 m = DecisionTreeClassifier(max_leaf_nodes=4).fit(trn_xs, trn_y);
 
 import graphviz
@@ -179,8 +184,6 @@ all_probs = [t.predict(val_xs) for t in trees]
 avg_probs = np.stack(all_probs).mean(0)
 
 mean_absolute_error(val_y, avg_probs)
-
-from sklearn.ensemble import RandomForestClassifier
 
 rf = RandomForestClassifier(100, min_samples_leaf=5)
 rf.fit(trn_xs, trn_y);

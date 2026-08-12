@@ -5,18 +5,36 @@ This file was extracted from the corresponding Jupyter notebook.
 
 import subprocess
 import sys
+import os
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
 
 # install fastkaggle if not available
 try: import fastkaggle
 except ModuleNotFoundError:
     subprocess.check_call([sys.executable, '-m', "pip", "install", "-Uq", "fastkaggle"])
 
-from fastkaggle import *
+from fastkaggle import push_notebook, setup_comp
+
+iskaggle = os.environ.get('KAGGLE_KERNEL_RUN_TYPE', '')
 
 # ## Going faster
 comp = 'paddy-disease-classification'
 path = setup_comp(comp, install='fastai "timm>=0.6.2.dev0"')
-from fastai.vision.all import *
+from fastai.vision.all import (
+    ImageDataLoaders,
+    PadMode,
+    Resize,
+    ResizeMethod,
+    aug_transforms,
+    error_rate,
+    get_image_files,
+    resize_images,
+    set_seed,
+    vision_learner,
+)
 set_seed(42)
 
 trn_path = Path('sml')

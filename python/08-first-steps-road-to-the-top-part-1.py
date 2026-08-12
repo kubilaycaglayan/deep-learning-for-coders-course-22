@@ -5,13 +5,19 @@ This file was extracted from the corresponding Jupyter notebook.
 
 import subprocess
 import sys
+import os
+from pathlib import Path
+
+import pandas as pd
 
 # install fastkaggle if not available
 try: import fastkaggle
 except ModuleNotFoundError:
     subprocess.check_call([sys.executable, '-m', "pip", "install", "-Uq", "fastkaggle"])
 
-from fastkaggle import *
+from fastkaggle import push_notebook, setup_comp
+
+iskaggle = os.environ.get('KAGGLE_KERNEL_RUN_TYPE', '')
 
 # ## Getting set up
 comp = 'paddy-disease-classification'
@@ -20,7 +26,18 @@ path = setup_comp(comp, install='fastai "timm>=0.6.2.dev0"')
 
 path
 
-from fastai.vision.all import *
+from fastai.vision.all import (
+    ImageDataLoaders,
+    PILImage,
+    Resize,
+    aug_transforms,
+    error_rate,
+    get_image_files,
+    set_seed,
+    slide,
+    valley,
+    vision_learner,
+)
 set_seed(42)
 
 path.ls()
@@ -33,7 +50,7 @@ img = PILImage.create(files[0])
 print(img.size)
 img.to_thumb(128)
 
-from fastcore.parallel import *
+from fastcore.parallel import parallel
 
 def f(o): return PILImage.create(o).size
 sizes = parallel(f, files, n_workers=8)
@@ -83,4 +100,3 @@ if not iskaggle:
                   title='First Steps: Road to the Top, Part 1',
                   file='first-steps-road-to-the-top-part-1.ipynb',
                   competition=comp, private=False, gpu=True)
-

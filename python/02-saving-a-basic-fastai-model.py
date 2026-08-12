@@ -10,7 +10,16 @@ import sys
 # Make sure we've got the latest version of fastai:
 subprocess.check_call([sys.executable, '-m', "pip", "install", "-Uqq", "fastai"])
 
-from fastai.vision.all import *
+from fastai.vision.all import (
+    ImageDataLoaders,
+    Resize,
+    URLs,
+    error_rate,
+    get_image_files,
+    resnet18,
+    untar_data,
+    vision_learner,
+)
 
 path = untar_data(URLs.PETS)/'images'
 
@@ -25,4 +34,3 @@ learn = vision_learner(dls, resnet18, metrics=error_rate)
 learn.fine_tune(3)
 
 learn.export('model.pkl')
-

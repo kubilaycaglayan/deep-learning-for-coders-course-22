@@ -13,7 +13,9 @@ import os
 import socket
 import subprocess
 import sys
-import warnings
+from pathlib import Path
+
+from PIL import Image
 
 
 try:
@@ -38,11 +40,26 @@ if iskaggle:
 subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-Uqq', 'duckduckgo_search'])
 
 from duckduckgo_search import DDGS  # DuckDuckGo has changed the API so we need to update
-from fastcore.all import *
+from fastai.vision.all import (
+    CategoryBlock,
+    DataBlock,
+    ImageBlock,
+    PILImage,
+    RandomSplitter,
+    Resize,
+    download_images,
+    error_rate,
+    get_image_files,
+    parent_label,
+    resnet18,
+    resize_images,
+    verify_images,
+    vision_learner,
+)
 
 
 def search_images(keywords, max_images=200):
-    return L(DDGS().images(keywords, max_results=max_images)).itemgot('image')
+    return [result['image'] for result in DDGS().images(keywords, max_results=max_images)]
 
 
 urls = search_images('bird photos', max_images=1)
@@ -52,8 +69,6 @@ from fastdownload import download_url
 
 dest = 'bird.jpg'
 download_url(urls[0], dest, show_progress=False)
-
-from fastai.vision.all import *
 
 im = Image.open(dest)
 im.to_thumb(256, 256)
@@ -78,7 +93,8 @@ for o in searches:
     resize_images(path / o, max_size=400, dest=path / o)
 
 failed = verify_images(get_image_files(path))
-failed.map(Path.unlink)
+for image_file in failed:
+    Path(image_file).unlink()
 len(failed)
 
 dls = DataBlock(

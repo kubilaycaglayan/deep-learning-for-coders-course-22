@@ -5,22 +5,38 @@ This file was extracted from the corresponding Jupyter notebook.
 
 import subprocess
 import sys
+import os
+import zipfile
+from pathlib import Path
 
 # ## Introduction and set up
-from pathlib import Path
-import os
+import numpy as np
+import pandas as pd
+import torch
+
+from fastai.tabular.all import (
+    Categorify,
+    CategoryBlock,
+    FillMissing,
+    Normalize,
+    RandomSplitter,
+    TabularPandas,
+    accuracy,
+    set_seed,
+    slide,
+    tabular_learner,
+    valley,
+)
 
 iskaggle = os.environ.get('KAGGLE_KERNEL_RUN_TYPE', '')
 if iskaggle:
     path = Path('../input/titanic')
     subprocess.check_call([sys.executable, '-m', "pip", "install", "-Uqq", "fastai"])
 else:
-    import zipfile,kaggle
+    import kaggle
     path = Path('titanic')
     kaggle.api.competition_download_cli(str(path))
     zipfile.ZipFile(f'{path}.zip').extractall(path)
-
-from fastai.tabular.all import *
 
 pd.options.display.float_format = '{:.2f}'.format
 set_seed(42)

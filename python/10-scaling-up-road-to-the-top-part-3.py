@@ -5,18 +5,37 @@ This file was extracted from the corresponding Jupyter notebook.
 
 import subprocess
 import sys
+import os
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import torch
 
 # install fastkaggle if not available
 try: import fastkaggle
 except ModuleNotFoundError:
     subprocess.check_call([sys.executable, '-m', "pip", "install", "-Uq", "fastkaggle"])
 
-from fastkaggle import *
+from fastkaggle import first, push_notebook, save_pickle, setup_comp
+
+iskaggle = os.environ.get('KAGGLE_KERNEL_RUN_TYPE', '')
 
 # ## Memory and gradient accumulation
 comp = 'paddy-disease-classification'
 path = setup_comp(comp, install='fastai "timm>=0.6.2.dev0"')
-from fastai.vision.all import *
+from fastai.vision.all import (
+    GradientAccumulation,
+    ImageDataLoaders,
+    PadMode,
+    Resize,
+    ResizeMethod,
+    aug_transforms,
+    error_rate,
+    get_image_files,
+    set_seed,
+    vision_learner,
+)
 set_seed(42)
 
 tst_files = get_image_files(path/'test_images').sorted()
@@ -133,4 +152,3 @@ if not iskaggle:
                   title='Scaling Up: Road to the Top, Part 3',
                   file='10-scaling-up-road-to-the-top-part-3.ipynb',
                   competition=comp, private=False, gpu=True)
-
