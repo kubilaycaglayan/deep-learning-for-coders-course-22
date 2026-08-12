@@ -23,7 +23,7 @@ df_results = pd.read_csv('results-imagenet.csv')
 def get_data(part, col):
     df = pd.read_csv(f'benchmark-{part}-amp-nhwc-pt111-cu113-rtx3090.csv').merge(df_results, on='model')
     df['secs'] = 1. / df[col]
-    df['family'] = df.model.str.extract('^([a-z]+?(?:v2)?)(?:\d|_|$)')
+    df['family'] = df.model.str.extract(r'^([a-z]+?(?:v2)?)(?:\d|_|$)')
     df = df[~df.model.str.endswith('gn')]
     df.loc[df.model.str.contains('in22'),'family'] = df.loc[df.model.str.contains('in22'),'family'] + '_in22'
     df.loc[df.model.str.contains('resnet.*d'),'family'] = df.loc[df.model.str.contains('resnet.*d'),'family'] + 'd'
@@ -62,4 +62,3 @@ tdf = get_data('train', 'train_samples_per_sec')
 show_all(tdf, 'Training', 'train_img_size')
 
 show_subs(tdf, 'Training', 'train_img_size')
-

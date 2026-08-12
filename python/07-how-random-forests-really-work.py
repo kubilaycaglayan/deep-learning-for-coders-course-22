@@ -94,10 +94,7 @@ def iscore(nm, split):
     col = trn_xs[nm]
     return score(col, trn_y, split)
 
-from ipywidgets import interact
-interact(nm=conts, split=15.5)(iscore);
-
-interact(nm=cats, split=2)(iscore);
+# Interactive notebook widgets omitted for standalone execution.
 
 nm = "Age"
 col = trn_xs[nm]

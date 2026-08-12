@@ -4,7 +4,6 @@ This file was extracted from the corresponding Jupyter notebook.
 """
 
 # ## Fitting a function with *gradient descent*
-from ipywidgets import interact
 from fastai.basics import *
 
 plt.rc('figure', dpi=90)
@@ -38,14 +37,14 @@ x[:5],y[:5]
 
 plt.scatter(x,y);
 
-@interact(a=1.1, b=1.1, c=1.1)
+# Interactive notebook widget omitted for standalone execution.
 def plot_quad(a, b, c):
     plt.scatter(x,y)
     plot_function(mk_quad(a,b,c), ylim=(-3,13))
 
 def mae(preds, acts): return (torch.abs(preds-acts)).mean()
 
-@interact(a=1.1, b=1.1, c=1.1)
+# Interactive notebook widget omitted for standalone execution.
 def plot_quad(a, b, c):
     f = mk_quad(a,b,c)
     plt.scatter(x,y)
@@ -93,16 +92,15 @@ import torch.nn.functional as F
 def rectified_linear2(m,b,x): return F.relu(m*x+b)
 plot_function(partial(rectified_linear2, 1,1))
 
-@interact(m=1.5, b=1.5)
+# Interactive notebook widget omitted for standalone execution.
 def plot_relu(m, b):
     plot_function(partial(rectified_linear, m,b), ylim=(-1,4))
 
 def double_relu(m1,b1,m2,b2,x):
     return rectified_linear(m1,b1,x) + rectified_linear(m2,b2,x)
 
-@interact(m1=-1.5, b1=-1.5, m2=1.5, b2=1.5)
+# Interactive notebook widget omitted for standalone execution.
 def plot_double_relu(m1, b1, m2, b2):
     plot_function(partial(double_relu, m1,b1,m2,b2), ylim=(-1,6))
 
 # ## How to recognise an owl
-
